@@ -11,8 +11,8 @@ import Combine
 class FrameworkListViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     
-    var viewModel: FrameworkListViewModel!
     var subscriptions = Set<AnyCancellable>()
+    var viewModel: FrameworkListViewModel!
     
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     typealias Item = AppleFramework
@@ -22,13 +22,8 @@ class FrameworkListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // 뷰모델 연결
         viewModel = FrameworkListViewModel(items: AppleFramework.list)
-        // 레이아웃 설정
         configureCollectionView()
-        
-        // Input, Output
         bind()
     }
     
@@ -39,7 +34,6 @@ class FrameworkListViewController: UIViewController {
             cell.configure(item)
             return cell
         })
-        
         collectionView.collectionViewLayout = layout()
         collectionView.delegate = self
     }
@@ -55,8 +49,8 @@ class FrameworkListViewController: UIViewController {
         group.interItemSpacing = .fixed(spacing)
         
         let section = NSCollectionLayoutSection(group: group)
-        section.interGroupSpacing = spacing
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+        section.interGroupSpacing = spacing
         
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout

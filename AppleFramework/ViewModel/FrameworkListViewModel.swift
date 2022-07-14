@@ -14,8 +14,8 @@ final class FrameworkListViewModel {
         self.selectedItem = CurrentValueSubject(selectedItem)
     }
     
-    let items: CurrentValueSubject<[AppleFramework], Never>
-    let selectedItem: CurrentValueSubject<AppleFramework?, Never>
+    var items: CurrentValueSubject<[AppleFramework], Never>
+    var selectedItem: CurrentValueSubject<AppleFramework?, Never>
     
     func didSelect(at indexPath: IndexPath) {
         let item = items.value[indexPath.item]
