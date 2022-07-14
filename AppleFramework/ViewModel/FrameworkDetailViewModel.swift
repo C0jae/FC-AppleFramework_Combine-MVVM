@@ -12,7 +12,7 @@ final class FrameworkDetailViewModel {
     init(framework: AppleFramework) {
         self.framework = CurrentValueSubject(framework)
     }
-
+    
     let framework: CurrentValueSubject<AppleFramework, Never>
     
     let buttonTapped = PassthroughSubject<AppleFramework, Never>()

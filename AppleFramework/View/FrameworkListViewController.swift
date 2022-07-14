@@ -22,18 +22,20 @@ class FrameworkListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         viewModel = FrameworkListViewModel(items: AppleFramework.list)
-        configureCollectionView()
+        configureCollectionVeiw()
         bind()
     }
     
-    private func configureCollectionView() {
+    private func configureCollectionVeiw() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, cellProvider: { collectionView, indexPath, item in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FrameworkCell", for: indexPath) as? FrameworkCell else { return nil }
             
             cell.configure(item)
             return cell
         })
+        
         collectionView.collectionViewLayout = layout()
         collectionView.delegate = self
     }
@@ -49,10 +51,11 @@ class FrameworkListViewController: UIViewController {
         group.interItemSpacing = .fixed(spacing)
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
         section.interGroupSpacing = spacing
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
         
         let layout = UICollectionViewCompositionalLayout(section: section)
+        
         return layout
     }
     
