@@ -11,24 +11,24 @@ import Combine
 class FrameworkListViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     
+    var viewModel: FrameworkListViewModel!
+    var subscriptions = Set<AnyCancellable>()
+    
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     typealias Item = AppleFramework
     enum Section {
         case main
     }
     
-    var subscription = Set<AnyCancellable>()
-    var viewModel: FrameworkListViewModel!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // viewModel : 뷰모델과 연결(?)
-        viewModel = FrameworkListViewModel(items: AppleFramework.list)
         
-        // configureCollectionView : 레이어 구성
+        // 뷰모델 연결
+        viewModel = FrameworkListViewModel(items: AppleFramework.list)
+        // 레이아웃 설정
         configureCollectionView()
         
-        // bind : 데이터 input, output
+        // Input, Output
         bind()
     }
     
@@ -45,13 +45,18 @@ class FrameworkListViewController: UIViewController {
     }
     
     private func layout() -> UICollectionViewCompositionalLayout {
+        let spacing: CGFloat = 10
+        
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.33), heightDimension: .fractionalWidth(0.33))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(0.33))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 3)
+        group.interItemSpacing = .fixed(spacing)
         
         let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = spacing
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
         
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
@@ -60,9 +65,19 @@ class FrameworkListViewController: UIViewController {
     private func bind() {
         viewModel.items
             .receive(on: RunLoop.main)
-            .sink { list in
+            .sink { [unowned self] list in
                 self.applySectionItems(list)
-            }
+            }.store(in: &subscriptions)
+        
+        viewModel.selectedItem
+            .compactMap { $0 }
+            .receive(on: RunLoop.main)
+            .sink { framework in
+                let sb = UIStoryboard(name: "Detail", bundle: nil)
+                let vc = sb.instantiateViewController(withIdentifier: "FrameworkDetailViewController") as! FrameworkDetailViewController
+                vc.viewModel = FrameworkDetailViewModel(framework: framework)
+                self.present(vc, animated: true)
+            }.store(in: &subscriptions)
     }
     
     private func applySectionItems(_ items: [Item], to section: Section = .main) {
@@ -75,6 +90,6 @@ class FrameworkListViewController: UIViewController {
 
 extension FrameworkListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // 선택되었을때 기능 -> viewModel
+        viewModel.didSelect(at: indexPath)
     }
 }

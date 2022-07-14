@@ -14,11 +14,9 @@ final class FrameworkListViewModel {
         self.selectedItem = CurrentValueSubject(selectedItem)
     }
     
-    // Data => Output
     let items: CurrentValueSubject<[AppleFramework], Never>
     let selectedItem: CurrentValueSubject<AppleFramework?, Never>
     
-    // User Action => Input
     func didSelect(at indexPath: IndexPath) {
         let item = items.value[indexPath.item]
         selectedItem.send(item)
