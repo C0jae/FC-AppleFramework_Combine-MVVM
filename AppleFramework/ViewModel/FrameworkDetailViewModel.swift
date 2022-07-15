@@ -14,7 +14,6 @@ final class FrameworkDetailViewModel {
     }
     
     let framework: CurrentValueSubject<AppleFramework, Never>
-    
     let buttonTapped = PassthroughSubject<AppleFramework, Never>()
     
     func learnMoreTapped() {

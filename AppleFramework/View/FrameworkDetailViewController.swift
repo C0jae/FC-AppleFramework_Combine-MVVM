@@ -15,12 +15,11 @@ class FrameworkDetailViewController: UIViewController {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     
-    var viewModel: FrameworkDetailViewModel!
     var subscriptions = Set<AnyCancellable>()
+    var viewModel: FrameworkDetailViewModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         bind()
     }
     
@@ -36,7 +35,7 @@ class FrameworkDetailViewController: UIViewController {
         viewModel.buttonTapped
             .receive(on: RunLoop.main)
             .compactMap { URL(string: $0.urlString) }
-            .sink { [unowned self] url in
+            .sink { url in
                 let safari = SFSafariViewController(url: url)
                 self.present(safari, animated: true)
             }.store(in: &subscriptions)

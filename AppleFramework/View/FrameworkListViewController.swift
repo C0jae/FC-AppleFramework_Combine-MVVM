@@ -17,18 +17,18 @@ class FrameworkListViewController: UIViewController {
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     typealias Item = AppleFramework
     enum Section {
-        case main
+        case mian
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         viewModel = FrameworkListViewModel(items: AppleFramework.list)
-        configureCollectionVeiw()
+        configureCollectionView()
         bind()
     }
     
-    private func configureCollectionVeiw() {
+    private func configureCollectionView() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: collectionView, cellProvider: { collectionView, indexPath, item in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FrameworkCell", for: indexPath) as? FrameworkCell else { return nil }
             
@@ -62,13 +62,13 @@ class FrameworkListViewController: UIViewController {
     private func bind() {
         viewModel.items
             .receive(on: RunLoop.main)
-            .sink { [unowned self] list in
+            .sink { list in
                 self.applySectionItems(list)
             }.store(in: &subscriptions)
         
         viewModel.selectedItem
-            .compactMap { $0 }
             .receive(on: RunLoop.main)
+            .compactMap { $0 }
             .sink { framework in
                 let sb = UIStoryboard(name: "Detail", bundle: nil)
                 let vc = sb.instantiateViewController(withIdentifier: "FrameworkDetailViewController") as! FrameworkDetailViewController
@@ -77,7 +77,7 @@ class FrameworkListViewController: UIViewController {
             }.store(in: &subscriptions)
     }
     
-    private func applySectionItems(_ items: [Item], to section: Section = .main) {
+    private func applySectionItems(_ items: [Item], to section: Section = .mian) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         snapshot.appendSections([section])
         snapshot.appendItems(items, toSection: section)
